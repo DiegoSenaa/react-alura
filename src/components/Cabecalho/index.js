@@ -1,18 +1,20 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
+import './cabecalho.css'
+// import './navMenu.css'
 
-import "./cabecalho.css";
-
-export default class Cabecalho extends Component{
-    render(){
-      return(
+class Cabecalho extends Component {
+    render() {
+        return (
             <header className="cabecalho">
-            <div className="cabecalho__container container">
-                <h1 className="cabecalho__logo">
-                    <a href="/">Twitelum</a>
-                </h1>
-                {this.props.children}
-            </div>
-        </header>
-      );  
+                <div className="cabecalho__container container">
+                    <h1 className="cabecalho__logo">
+                        <a href="/">Twitelum</a>
+                    </h1>
+                    { this.props.children }
+                </div>
+            </header>
+        )
     }
 }
+
+export default Cabecalho
