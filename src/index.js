@@ -12,13 +12,16 @@ import "./assets/css/notificacao.css";
 
 import "./assets/css/novoTweet.css";
 import Roteamento from './routes';
+import { NotificacaoContextProvider } from './context/NotificacaoContext'
 
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
-    <BrowserRouter>
-        <Roteamento />
-    </BrowserRouter>,
+    <NotificacaoContextProvider>
+        <BrowserRouter>
+            <Roteamento />
+        </BrowserRouter>
+    </NotificacaoContextProvider>,
     document.getElementById("root"));
 
 // If you want your app to work offline and load faster, you can change

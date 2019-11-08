@@ -14,7 +14,7 @@
 	background: #454545;
 	color: white;
 	font-weight: normal;
-	animation: toast 5s ease forwards;
+	animation: toast 5000s ease forwards;
 	box-shadow: 1px 1px 1px rgba(0,0,0,.1);
 	text-align: center;
 }
