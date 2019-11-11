@@ -1,12 +1,20 @@
 import React, { Component, Fragment } from 'react'
-import { NotificacaoContext } from '../../context/NotificacaoContext' 
-import Cabecalho from '../../components/cabecalho'
+import { NotificacaoContext } from '../../context/NotificacaoContext'
+import { LoginService } from '../../services/LoginService'
+import Cabecalho from '../../components/Cabecalho'
 import Widget from '../../components/Widget'
 
 import './loginPage.css'
 
 class LoginPage extends Component {
     static contextType = NotificacaoContext
+
+    constructor() {
+        super();
+        this.state = {
+            error: ''
+        }
+    }
 
     fazerLogin = (infosDoEvento) => {
         infosDoEvento.preventDefault();
@@ -16,34 +24,16 @@ class LoginPage extends Component {
             senha: this.refs.inputSenha.value
         }
 
-        fetch('https://twitelum-api.herokuapp.com/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dadosDeLogin)
-        })
-        .then(responseDoServer => {
-            if(!responseDoServer.ok) {
-                const respostaDeErroDoServidor = responseDoServer.json();
-                const errorObj = Error(respostaDeErroDoServidor.message);
-                errorObj.status = responseDoServer.status;
-                throw errorObj;
-
-            }
-
-            return responseDoServer.json();
-        })
-        .then(dadosDoServidorEmObj => {
-            const token = dadosDoServidorEmObj.token;
-            if(token) {
-                localStorage.setItem('TOKEN', token);
+        LoginService.logar(dadosDeLogin)
+            .then(() => {
+                this.setState({ error: '' })
+                this.context.setMsg('Bem vindo ao Twitelum, login foi um sucesso.');
                 this.props.history.push('/')
-            }
-        })
-        .catch(err => {
-            console.error(`[Erro ${err.status}]`, err.message)
-        })
+            })
+            .catch(err => {
+                this.setState({ error: err.message })
+                console.error(`[Erro ${err.status}]`, err.message)
+            })
     }
 
     render() {
@@ -63,9 +53,11 @@ class LoginPage extends Component {
                                     <label className="loginPage__label" htmlFor="senha">Senha</label> 
                                     <input ref="inputSenha" className="loginPage__input" type="password" id="senha" name="senha"/>
                                 </div>
-                                {/* <div className="loginPage__errorBox">
-                                    Mensagem de erro!
-                                </div> */}
+                                { this.state.error && ( 
+                                    <div className="loginPage__errorBox">
+                                        {this.state.error}
+                                    </div> 
+                                )}
                                 <div className="loginPage__inputWrap">
                                     <button className="loginPage__btnLogin" type="submit"> 
                                         Logar
