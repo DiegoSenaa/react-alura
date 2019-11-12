@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from 'react'
 import { NotificacaoContext } from '../../context/NotificacaoContext'
 import { LoginService } from '../../services/LoginService'
-import Cabecalho from '../../components/Cabecalho'
+import Cabecalho from '../../components/cabecalho'
 import Widget from '../../components/Widget'
+import InputFormField from '../../components/InputFormField';
+import FormManager from '../../components/FormManager';
 
 import './loginPage.css'
 
@@ -16,12 +18,12 @@ class LoginPage extends Component {
         }
     }
 
-    fazerLogin = (infosDoEvento) => {
+    fazerLogin = (infosDoEvento, values) => {
         infosDoEvento.preventDefault();
 
         const dadosDeLogin = {
-            login: this.refs.inputLogin.value,
-            senha: this.refs.inputSenha.value
+            login: values.inputLogin,
+            senha: values.inputSenha
         }
 
         LoginService.logar(dadosDeLogin)
@@ -44,26 +46,62 @@ class LoginPage extends Component {
                     <div className="container">
                         <Widget>
                             <h2 className="loginPage__title">Seja bem vindo!</h2>
-                            <form className="loginPage__form" action="/" onSubmit={this.fazerLogin}>
-                                <div className="loginPage__inputWrap">
-                                    <label className="loginPage__label" htmlFor="login">Login</label> 
-                                    <input ref="inputLogin" className="loginPage__input" type="text" id="login" name="login"/>
-                                </div>
-                                <div className="loginPage__inputWrap">
-                                    <label className="loginPage__label" htmlFor="senha">Senha</label> 
-                                    <input ref="inputSenha" className="loginPage__input" type="password" id="senha" name="senha"/>
-                                </div>
-                                { this.state.error && ( 
-                                    <div className="loginPage__errorBox">
-                                        {this.state.error}
-                                    </div> 
-                                )}
-                                <div className="loginPage__inputWrap">
-                                    <button className="loginPage__btnLogin" type="submit"> 
-                                        Logar
-                                    </button>
-                                </div>
-                            </form>
+                            <FormManager
+                                initialValues={{ inputLogin: '', inputSenha: '' }}
+                                onFormValidation={values => {
+                                    const errors = {};
+                                    if (!values.inputLogin) errors.inputLogin = 'Esse campo é obrigatório';
+                                    if (!values.inputSenha) errors.inputSenha = 'Esse campo é obrigatório';
+
+                                    return errors
+                                }}>
+
+                                {
+                                    ({
+                                        values,
+                                        errors,
+                                        touched,
+                                        onFormFieldChange,
+                                        onFormFieldBlur
+                                    }) => (
+                                            <form
+                                                className="loginPage__form"
+                                                action="/"
+                                                onSubmit={(event) => this.fazerLogin(event, values)}>
+                                                <InputFormField
+                                                    id='inputLogin'
+                                                    label='Login: '
+                                                    onChange={onFormFieldChange}
+                                                    values={values}
+                                                    errors={errors}
+                                                    onBlur={onFormFieldBlur}
+                                                    touched={touched}
+                                                />
+
+                                                <InputFormField
+                                                    id='inputSenha'
+                                                    label='Senha: '
+                                                    onChange={onFormFieldChange}
+                                                    values={values}
+                                                    errors={errors}
+                                                    onBlur={onFormFieldBlur}
+                                                    touched={touched}
+                                                />
+
+                                                {this.state.error && (
+                                                    <div className="loginPage__errorBox">
+                                                        {this.state.error}
+                                                    </div>
+                                                )}
+                                                <div className="loginPage__inputWrap">
+                                                    <button className="loginPage__btnLogin" type="submit">
+                                                        Logar
+                                                </button>
+                                                </div>
+                                            </form>
+                                        )
+                                }
+                            </FormManager>
                         </Widget>
                     </div>
                 </div>

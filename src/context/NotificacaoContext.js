@@ -8,7 +8,6 @@ export const NotificacaoContext = createContext({
 
 export const NotificacaoContextProvider = ({children}) => {
     const [msg, setMsg] = useState('')
-    console.log('msg: ', msg)
 
     return (
         <NotificacaoContext.Provider value={{ msg, setMsg }}>
